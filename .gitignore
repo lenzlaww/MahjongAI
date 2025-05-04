@@ -33,3 +33,7 @@ workspace/suphx-reward-shaping/check/*
 discard_datasets/*
 mahjong-dataset.zip
 model_checkpoints/*
+
+discard_datasets/*
+mahjong-dataset.zip
+model_checkpoints/*
