@@ -29,3 +29,7 @@ workspace/suphx-reward-shaping/check/*
 .DS_Store
 .vscode/
 .python_version
+
+discard_datasets/*
+mahjong-dataset.zip
+model_checkpoints/*
