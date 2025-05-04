@@ -1,5 +1,38 @@
 import torch
 import ast 
+import mjx
+import random
+from typing import List
+from tqdm import tqdm
+from mjx.agents import RandomAgent
+import json
+
+
+agent = RandomAgent()
+env = mjx.MjxEnv()
+N = 10
+for _ in tqdm(range(N)):
+  obs_dict = env.reset()
+  while not env.done():
+      actions = {player_id: agent.act(obs)
+              for player_id, obs in obs_dict.items()}
+      obs_dict = env.step(actions)
+  returns = env.rewards()
+
+state = env.state()
+obs = obs_dict['player_0']
+
+
+roundWind = obs.round()
+dealer = obs.dealer()
+POVPlayer = obs.who()
+#honba
+honba = obs.honba()
+#riichi
+riichi = obs.kyotaku()
+
+wall = len(json.loads(env.state().to_json())["hiddenState"]["wall"])
+
 
 
 def setBoardState(roundWind, dealer, POVPlayer, honba, riichi, wall, p0Score, p1Score, p2Score, p3Score):
