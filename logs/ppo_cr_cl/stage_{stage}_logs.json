@@ -1,0 +1,4 @@
+{"episode": 100, "avg_reward": 354.27, "actor_loss": -0.0, "value_loss": 2561.318115234375, "entropy": 0.039470113813877106, "total_loss": 1280.65869140625}
+{"episode": 200, "avg_reward": 321.11, "actor_loss": 4.001430653488569e-08, "value_loss": 5209.58154296875, "entropy": 0.008554303087294102, "total_loss": 2604.790771484375}
+{"episode": 100, "avg_reward": 193.17, "actor_loss": -1.3291628242484421e-08, "value_loss": 1109.8502197265625, "entropy": 0.023579394444823265, "total_loss": 554.9248657226562}
+{"episode": 100, "avg_reward": 111.03, "actor_loss": 3.4574295426637036e-08, "value_loss": 1149.6561279296875, "entropy": 0.04797101020812988, "total_loss": 574.8275756835938}
