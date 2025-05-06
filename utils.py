@@ -4,6 +4,10 @@ import json
 import mjx
 from mjx.observation import Observation
 from mjx.env import MjxEnv
+from typing import Any
+
+from discard_tile.discard import get_tiles_prob
+DISCARD_MODEL_PATH = "pretrained_models/ml_discard_model.pt"
 
 def if_i_win(obs: Observation) -> bool:
         """
@@ -28,17 +32,31 @@ def if_i_deal_in(obs: Observation) -> bool:
                 return True
     return False
 
-# def if_safe_tile(obs: Observation) -> bool:
-#     """
-#     Check if the tile discarded last turn is a safe tile.
-#     """
-#     # print("prev_obs", len(prev_obs.events()))
-#     # print("cur_obs", len(cur_obs.events()))
-#     # next_event = cur_obs.events()[len(prev_obs.events())]
-#     # if next_event.type == mjx.EventType.DRAW or next_event.type == mjx.EventType.TSUMOGIRI:
-#     #     return True
-#     # return False
-#     pass
+def if_safe_tile(obs: Observation, env: MjxEnv) -> Any:
+    """
+    Check if the tile discarded last turn is a safe tile by using the supervised learning model: discard model.
+    If the score of the tile is less than 0, it is a danger tile.
+    """
+    tile_id = -1
+    # Get the score for all tiles
+    tile_score_board = get_tiles_prob(obs, env, DISCARD_MODEL_PATH)
+    # Get the last tile discarded by the target player
+    for event in obs.events():
+        if event.type == mjx.EventType.DISCARD or event.type == mjx.EventType.TSUMOGIRI:
+            if event.who() != obs.who():
+                tile_id = event.tile().id()//4
+                break
+    # If the tile_id is -1, it means that there is no tile discarded by the target player.
+    for k, v in enumerate(tile_score_board):
+        if k == tile_id:
+            # If the score is less than 0, it is a danger tile.
+            if v < 0:
+                return 0
+            else:
+                return 1
+    return -1
+ 
+    
     
 def get_tens_change(obs: Observation, env: MjxEnv) -> int:
     """
@@ -76,7 +94,7 @@ REWARD_WEIGHT = {
     'draw_notenpei': -5, # draw no tenpei
 }
 
-def compute_reward(cur_obs: Observation, prev_obs: Observation, env: MjxEnv) -> float:
+def compute_reward(cur_obs: Observation, prev_obs: Observation, env: MjxEnv, discard_model: bool = True) -> float:
     """
     Compute the reward based on the observation.
     """
@@ -94,12 +112,13 @@ def compute_reward(cur_obs: Observation, prev_obs: Observation, env: MjxEnv) -> 
     if cur_shanten == 1:
         reward += REWARD_WEIGHT['tenpei_bouns']
 
-    # # Reward safe tile
-    # if if_safe_tile(prev_obs, cur_obs):
-    #     reward += REWARD_WEIGHT['safe_tile_bounus']
-    # else:
-    #     reward += REWARD_WEIGHT['danger_tile_penalty']
-        
+    # Reward safe tile
+    if discard_model:
+        safe = if_safe_tile(cur_obs, env)
+        if safe == 0:
+            reward += REWARD_WEIGHT['danger_tile_penalty']
+        elif safe == 1:
+            reward += REWARD_WEIGHT['safe_tile_bounus']
     # Reward when round is done
     riichi_flag = if_i_riichi(cur_obs)
     # Round bonus
