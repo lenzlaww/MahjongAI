@@ -29,7 +29,7 @@ battle.ipynb
 
 # 4. Our trained models
 1. Our all trained models location: pretrained_models/
-2. Dataset for training the discard model: https://www.kaggle.com/datasets/trongdt/japanese-mahjong-board-states/data
+2. Dataset for training the discard model: 
 
 
 # 5. Environment

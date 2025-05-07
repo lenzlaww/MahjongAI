@@ -303,7 +303,7 @@ class GymEnv(gym.Env):
         obs = self.curr_obs_dict[self.target_player]
         done = self.mjx_env.done(self.done_type)
         if self.prev_obs is not None and obs is not None:
-            reward = compute_reward(self.prev_obs, obs, self.mjx_env)
+            reward = compute_reward(self.prev_obs, obs, self.mjx_env, discard_model=self.discard_model)
         if self.target_player in self.curr_obs_dict:
             self.prev_obs = self.curr_obs_dict[self.target_player]
         # feat = obs.to_features(self.feature_type)
